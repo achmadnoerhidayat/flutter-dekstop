@@ -193,8 +193,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                       ],
                       rows: state.orderDetail.map((e) {
-                        int begining =
-                            int.parse(e.product!.stock) - int.parse(e.qty!);
+                        int begining = (int.parse(e.stockBarang!) > 0)
+                            ? int.parse(e.stockBarang!)
+                            : int.parse(e.product!.stock) - int.parse(e.qty!);
                         return DataRow(
                           color: WidgetStateProperty.all(Colors.white),
                           cells: [

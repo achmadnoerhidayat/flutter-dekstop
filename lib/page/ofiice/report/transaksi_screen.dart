@@ -1,7 +1,9 @@
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:kasir_dekstop/bloc/customer/customer_bloc.dart';
 import 'package:kasir_dekstop/bloc/transaksi/transaksi_bloc.dart';
 import 'package:kasir_dekstop/helper/number_format.dart';
 import 'package:kasir_dekstop/models/transaksi_model.dart';
@@ -30,13 +32,16 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
   int discount = 0;
   int subtotal = 0;
   DateTime? now = DateTime.now();
+  SingleValueDropDownController? txtCustomer;
   @override
   void initState() {
     super.initState();
     context.read<TransaksiBloc>().add(GetTrans());
+    context.read<CustomerBloc>().add(GetCustomer());
     tanggal = TextEditingController();
     orderId = TextEditingController();
     tanggal!.text = DateFormat("yyyy-MM-dd").format(_date!).toString();
+    txtCustomer = SingleValueDropDownController();
   }
 
   late PlutoGridStateManager stateManager;
@@ -78,53 +83,16 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DataTable(
-                  headingRowColor: WidgetStateColor.resolveWith(
-                    (states) =>
-                        Colors.white, // Warna header dapat disesuaikan di sini
-                  ),
-                  columns: [
-                    DataColumn(
-                      label: ConstrainedBox(
-                        constraints: const BoxConstraints(),
-                        child: Text(
-                          "No",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.playfairDisplay(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0XFF000000)),
-                        ),
-                      ),
-                    ),
-                  ],
-                  rows: state.transaksi.map((trans) {
-                    int key = state.transaksi.indexOf(trans);
-                    int no = key + 1;
-                    subtotal = 0;
-                    discount = 0;
-                    return DataRow(
-                        color: WidgetStateProperty.all(Colors.white),
-                        cells: [
-                          DataCell(
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(),
-                              child: Text(
-                                no.toString(),
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.play(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400,
-                                    color: const Color(0XFF000000)),
-                              ),
-                            ),
-                          )
-                        ]);
-                  }).toList(),
-                ),
                 Expanded(
                   child: PlutoGrid(
                     columns: [
+                      PlutoColumn(
+                        readOnly: true,
+                        title: "No",
+                        field: "no",
+                        width: 65.0,
+                        type: PlutoColumnType.text(),
+                      ),
                       PlutoColumn(
                         readOnly: true,
                         title: "No Order",
@@ -183,8 +151,11 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
                       ),
                     ],
                     rows: state.transaksi.map((detail) {
+                      int key = state.transaksi.indexOf(detail);
+                      int no = key + 1;
                       return PlutoRow(
                         cells: {
+                          "no": PlutoCell(value: no.toString()),
                           "order": PlutoCell(value: detail.orderId),
                           "kasir": PlutoCell(
                               value: (detail.user != null)
@@ -765,6 +736,79 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
         );
       },
     );
+    final customer = BlocBuilder<CustomerBloc, CustomerState>(
+      builder: (context, state) {
+        if (state is CustomerSuccess) {
+          return DropDownTextField(
+            controller: txtCustomer,
+            clearOption: true,
+            enableSearch: true,
+            clearIconProperty: IconProperty(color: Colors.red),
+            searchTextStyle: const TextStyle(color: Colors.black),
+            textFieldDecoration: InputDecoration(
+              labelText: 'Pilih Customer',
+              labelStyle: const TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: const BorderSide(color: Colors.blue, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: const BorderSide(color: Colors.grey, width: 2),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: const BorderSide(color: Colors.grey, width: 2),
+              ),
+            ),
+            searchDecoration: const InputDecoration(hintText: "Search Suplier"),
+            dropDownItemCount: 6,
+            dropDownList: state.custModel.map((e) {
+              return DropDownValueModel(name: e.nama!, value: e.nama!);
+            }).toList(),
+            onChanged: (value) {
+              if (value is DropDownValueModel) {
+                Map<String, dynamic> request = {
+                  "no_order": "",
+                  "tanggal": "",
+                  "cutomer_id": value.value,
+                };
+                context
+                    .read<TransaksiBloc>()
+                    .add(GetSearchTrans(params: request));
+              }
+            },
+          );
+        }
+        return DropDownTextField(
+          controller: txtCustomer,
+          clearOption: true,
+          enableSearch: true,
+          clearIconProperty: IconProperty(color: Colors.red),
+          searchTextStyle: const TextStyle(color: Colors.black),
+          textFieldDecoration: InputDecoration(
+            labelText: 'Pilih Customer',
+            labelStyle: const TextStyle(color: Colors.grey),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: const BorderSide(color: Colors.blue, width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: const BorderSide(color: Colors.grey, width: 2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: const BorderSide(color: Colors.grey, width: 2),
+            ),
+          ),
+          searchDecoration: const InputDecoration(hintText: "Search Suplier"),
+          dropDownItemCount: 6,
+          dropDownList: const [],
+          onChanged: (value) {},
+        );
+      },
+    );
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -800,7 +844,7 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.34,
+                              width: MediaQuery.of(context).size.width * 0.25,
                               child: TextField(
                                 controller: orderId,
                                 minLines: 1,
@@ -819,6 +863,10 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
                                   color: Colors.black,
                                 ),
                               ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              child: customer,
                             ),
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.20,
@@ -859,7 +907,7 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
                               ),
                             ),
                             SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.2,
+                              width: MediaQuery.of(context).size.width * 0.1,
                               child: ElevatedButton(
                                 onPressed: () {
                                   Map<String, dynamic> request = {
@@ -867,6 +915,11 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
                                         ? orderId!.text
                                         : " ",
                                     "tanggal": tanggal!.text,
+                                    "cutomer_id":
+                                        (txtCustomer?.dropDownValue?.value !=
+                                                null)
+                                            ? txtCustomer?.dropDownValue?.value
+                                            : "",
                                   };
                                   context
                                       .read<TransaksiBloc>()

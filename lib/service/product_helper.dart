@@ -319,6 +319,7 @@ class ProductHelper {
             idPembelian TEXT,
             idProduct TEXT,
             qty TEXT,
+            stockBarang TEXT,
             created TEXT
           )
         ''');
@@ -1015,6 +1016,7 @@ class ProductHelper {
     if (search != null) {
       sql += "WHERE c.nama LIKE '%$search%'";
     }
+    sql += " ORDER BY c.nama ASC";
     List<CustomerModel> lists = [];
     try {
       var database = await getDatabase();
@@ -1710,12 +1712,21 @@ class ProductHelper {
         "SELECT transaksi.id, transaksi.idUser,transaksi.idCustomer,transaksi.orderId,transaksi.shiftId,transaksi.totalGula,transaksi.weightGula,transaksi.priceBeliGula,transaksi.priceJualGula,transaksi.totalKasbon,transaksi.setorKasbon,transaksi.setorGula,transaksi.totalHarga,transaksi.bayar,transaksi.kembalian,transaksi.paymentType,transaksi.created, customer.nama, customer.phone, customer.email, customer.created AS date, user.nama AS userNama, user.role, user.email AS userEmail, user.password, user.created AS userCreated FROM transaksi LEFT JOIN customer ON customer.id = transaksi.idCustomer LEFT JOIN user ON user.id = transaksi.idUser";
     var noOrder = map['no_order'];
     var tanggal = map['tanggal'];
+    var customer = map['cutomer_id'];
     if (noOrder != "") {
       sql +=
           " WHERE transaksi.orderId LIKE '%$noOrder%' AND transaksi.created LIKE '%$tanggal%'";
     } else {
-      sql += " WHERE transaksi.created LIKE '$tanggal%'";
+      if (customer != "") {
+        sql += " WHERE customer.nama LIKE '$customer%'";
+        if (tanggal != "") {
+          sql += " AND transaksi.created LIKE '$tanggal%'";
+        }
+      } else {
+        sql += " WHERE transaksi.created LIKE '$tanggal%'";
+      }
     }
+    sql += " ORDER BY transaksi.created DESC";
     List<Map<String, dynamic>> result = await database.rawQuery(sql);
     receipt = await getReceipt();
     for (var i = 0; i < result.length; i++) {
@@ -2645,6 +2656,7 @@ class ProductHelper {
           idPembelian: result[i]['idPembelian'],
           idProduct: result[i]['idProduct'],
           qty: result[i]['qty'],
+          stockBarang: result[i]['stockBarang'],
           created: result[i]['created'],
           product: product,
           orderDetail: transaksi,

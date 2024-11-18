@@ -56,6 +56,7 @@ class OrderDetailModel {
   String? idPembelian;
   final String? idProduct;
   String? qty;
+  String? stockBarang;
   String? harga;
   String? subtotal;
   final String? created;
@@ -67,6 +68,7 @@ class OrderDetailModel {
     required this.idPembelian,
     required this.idProduct,
     this.qty,
+    this.stockBarang,
     this.harga,
     this.subtotal,
     required this.created,
@@ -80,6 +82,7 @@ class OrderDetailModel {
         idPembelian: json["idPembelian"],
         idProduct: json["idProduct"],
         qty: json["qty"],
+        stockBarang: json["stockBarang"],
         created: json["created"],
       );
 
@@ -88,6 +91,7 @@ class OrderDetailModel {
         "idPembelian": idPembelian,
         "idProduct": idProduct,
         "qty": qty,
+        "stockBarang": stockBarang,
         "created": created,
       };
 }

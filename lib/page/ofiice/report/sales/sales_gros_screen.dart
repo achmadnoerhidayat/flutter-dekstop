@@ -393,6 +393,7 @@ class _SalesGrosScreenState extends State<SalesGrosScreen> {
                                             ? orderId!.text
                                             : " ",
                                         "tanggal": dateStr,
+                                        "cutomer_id": "",
                                       };
                                       context
                                           .read<TransaksiBloc>()
@@ -448,6 +449,7 @@ class _SalesGrosScreenState extends State<SalesGrosScreen> {
                                         ? orderId!.text
                                         : " ",
                                     "tanggal": tanggal!.text,
+                                    "cutomer_id": "",
                                   };
                                   context
                                       .read<TransaksiBloc>()

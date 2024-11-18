@@ -443,6 +443,7 @@ class _SalesPaymentScreenState extends State<SalesPaymentScreen> {
                                             ? orderId!.text
                                             : " ",
                                         "tanggal": dateStr,
+                                        "cutomer_id": "",
                                       };
                                       context
                                           .read<TransaksiBloc>()
@@ -498,6 +499,7 @@ class _SalesPaymentScreenState extends State<SalesPaymentScreen> {
                                         ? orderId!.text
                                         : " ",
                                     "tanggal": tanggal!.text,
+                                    "cutomer_id": "",
                                   };
                                   context
                                       .read<TransaksiBloc>()

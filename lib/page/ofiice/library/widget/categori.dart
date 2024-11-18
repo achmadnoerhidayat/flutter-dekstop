@@ -42,34 +42,39 @@ class _CategoriState extends State<Categori> {
               kategori.add(varians);
             }
           }
-          return Container(
-            width: MediaQuery.of(context).size.width * 0.76,
-            height: 46,
-            padding: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              border: Border.all(
-                  color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+          return DropdownButtonFormField(
+            isExpanded: true,
+            hint: const Text("Pilih Kategori Barang"),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              contentPadding:
+                  const EdgeInsets.only(left: 35, top: 8, bottom: 15),
+              fillColor: Colors.white,
+              hintStyle: const TextStyle(
+                color: Color(0XFFAA9D9D),
+              ),
             ),
-            child: DropdownButton(
-              isExpanded: true,
-              underline: const SizedBox(),
-              hint: const Text("Pilih Kategori Barang"),
-              dropdownColor: Colors.white,
-              items: kategori.map((val) {
-                return DropdownMenuItem(
-                  value: "${val.id}",
-                  child: Text("${val.nama}"),
-                );
-              }).toList(),
-              onChanged: (data) {
-                String kategori = data!;
-                setState(() {
-                  widget.txtCategory!.text = kategori;
-                });
-              },
-              value: widget.txtCategory!.text,
-            ),
+            validator: (value) {
+              if (value == '0') {
+                return 'Kategori Barang Tidak Boleh Kosong';
+              }
+              return null;
+            },
+            items: kategori.map((val) {
+              return DropdownMenuItem(
+                value: "${val.id}",
+                child: Text("${val.nama}"),
+              );
+            }).toList(),
+            onChanged: (data) {
+              String kategori = data!;
+              setState(() {
+                widget.txtCategory!.text = kategori;
+              });
+            },
+            value: widget.txtCategory!.text,
           );
         }
         return Container(

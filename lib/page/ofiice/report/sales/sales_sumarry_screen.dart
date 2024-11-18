@@ -241,6 +241,7 @@ class _SalesSumarryScreenState extends State<SalesSumarryScreen> {
                                             ? orderId!.text
                                             : " ",
                                         "tanggal": dateStr,
+                                        "cutomer_id": "",
                                       };
                                       context
                                           .read<TransaksiBloc>()
@@ -296,6 +297,7 @@ class _SalesSumarryScreenState extends State<SalesSumarryScreen> {
                                         ? orderId!.text
                                         : " ",
                                     "tanggal": tanggal!.text,
+                                    "cutomer_id": "",
                                   };
                                   context
                                       .read<TransaksiBloc>()

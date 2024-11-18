@@ -35,6 +35,7 @@ class _ItemLibraryScreenState extends State<ItemLibraryScreen> {
   TextEditingController? txtSeach;
   List<VarianModel> varian = [];
   String? kategori;
+  final form = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -512,75 +513,30 @@ class _ItemLibraryScreenState extends State<ItemLibraryScreen> {
       builder: (context) {
         return AlertDialog(
           insetPadding: EdgeInsets.zero,
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // header
-                Container(
-                  height: 100,
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: const Color(0xFFFAF5F5))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          varian = [];
-                          context
-                              .read<RequestVariantBloc>()
-                              .add(GetVarianList(formVarian: const []));
-                          txtNamaBarang!.clear();
-                          txtCategory!.clear();
-                          txtDeskripsi!.clear();
-                          txtHarga!.clear();
-                          txtModal!.clear();
-                          txtSku!.clear();
-                          txtStok!.clear();
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            fixedSize: const Size(150, 70),
-                            backgroundColor: const Color(0XFFFFFFFF)),
-                        child: Text(
-                          "Cancel",
-                          style: GoogleFonts.playfairDisplay(
-                              color: const Color(0XFF2334A6), fontSize: 20),
-                        ),
-                      ),
-                      BlocConsumer<ProductBloc, ProductState>(
-                        listener: (context, state) {
-                          if (state is ProductCreateSuccess) {
-                            List<VarianModel> reqVarian = [];
-                            if (varian.isNotEmpty) {
-                              for (var element in varian) {
-                                reqVarian.add(VarianModel(
-                                  namaVarian: element.namaVarian,
-                                  hargaVarian:
-                                      element.hargaVarian.replaceAll('.', ''),
-                                  skuVarian: element.skuVarian,
-                                  stokVarian: element.stokVarian,
-                                  hargaModalVarian: element.hargaModalVarian
-                                      .replaceAll('.', ''),
-                                ));
-                              }
-                              context.read<RequestVariantBloc>().add(
-                                  CreateVarian(
-                                      formVarian: reqVarian,
-                                      idBarang: state.id));
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  backgroundColor: Colors.blue,
-                                  content: Text('Success Menambah Product')),
-                            );
+          content: Form(
+            key: form,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // header
+                  Container(
+                    height: 100,
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: const Color(0xFFFAF5F5))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            varian = [];
+                            context
+                                .read<RequestVariantBloc>()
+                                .add(GetVarianList(formVarian: const []));
                             txtNamaBarang!.clear();
                             txtCategory!.clear();
                             txtDeskripsi!.clear();
@@ -588,15 +544,100 @@ class _ItemLibraryScreenState extends State<ItemLibraryScreen> {
                             txtModal!.clear();
                             txtSku!.clear();
                             txtStok!.clear();
-                            varian = [];
                             Navigator.of(context).pop();
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is ProductLoading) {
+                          },
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              fixedSize: const Size(150, 70),
+                              backgroundColor: const Color(0XFFFFFFFF)),
+                          child: Text(
+                            "Cancel",
+                            style: GoogleFonts.playfairDisplay(
+                                color: const Color(0XFF2334A6), fontSize: 20),
+                          ),
+                        ),
+                        BlocConsumer<ProductBloc, ProductState>(
+                          listener: (context, state) {
+                            if (state is ProductCreateSuccess) {
+                              List<VarianModel> reqVarian = [];
+                              if (varian.isNotEmpty) {
+                                for (var element in varian) {
+                                  reqVarian.add(VarianModel(
+                                    namaVarian: element.namaVarian,
+                                    hargaVarian:
+                                        element.hargaVarian.replaceAll('.', ''),
+                                    skuVarian: element.skuVarian,
+                                    stokVarian: element.stokVarian,
+                                    hargaModalVarian: element.hargaModalVarian
+                                        .replaceAll('.', ''),
+                                  ));
+                                }
+                                context.read<RequestVariantBloc>().add(
+                                    CreateVarian(
+                                        formVarian: reqVarian,
+                                        idBarang: state.id));
+                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    backgroundColor: Colors.blue,
+                                    content: Text('Success Menambah Product')),
+                              );
+                              txtNamaBarang!.clear();
+                              txtCategory!.clear();
+                              txtDeskripsi!.clear();
+                              txtHarga!.clear();
+                              txtModal!.clear();
+                              txtSku!.clear();
+                              txtStok!.clear();
+                              varian = [];
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          builder: (context, state) {
+                            if (state is ProductLoading) {
+                              return ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    fixedSize: const Size(150, 70),
+                                    backgroundColor: const Color(0XFF2334A6)),
+                                child: Text(
+                                  "Save",
+                                  style: GoogleFonts.playfairDisplay(
+                                      color: const Color(0XFFFFFFFF),
+                                      fontSize: 20),
+                                ),
+                              );
+                            }
                             return ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                if (form.currentState!.validate()) {
+                                  int id = int.parse(txtCategory!.text);
+                                  ProductsModel req = ProductsModel(
+                                      namaBarang: txtNamaBarang!.text,
+                                      idCategory: id,
+                                      idVarian: 0,
+                                      deskripsi: txtDeskripsi!.text,
+                                      harga: txtHarga!.text.replaceAll('.', ''),
+                                      sku: txtSku!.text,
+                                      hargaModal:
+                                          txtModal!.text.replaceAll('.', ''),
+                                      stock: txtStok!.text,
+                                      createdAt:
+                                          DateTime.now().toIso8601String());
+                                  context
+                                      .read<ProductBloc>()
+                                      .add(CreateProduct(productsModel: req));
+                                  context
+                                      .read<ProductBloc>()
+                                      .add(GetProducts());
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -611,144 +652,36 @@ class _ItemLibraryScreenState extends State<ItemLibraryScreen> {
                                     fontSize: 20),
                               ),
                             );
-                          }
-                          return ElevatedButton(
-                            onPressed: () {
-                              int id = int.parse(txtCategory!.text);
-                              ProductsModel req = ProductsModel(
-                                  namaBarang: txtNamaBarang!.text,
-                                  idCategory: id,
-                                  idVarian: 0,
-                                  deskripsi: txtDeskripsi!.text,
-                                  harga: txtHarga!.text.replaceAll('.', ''),
-                                  sku: txtSku!.text,
-                                  hargaModal:
-                                      txtModal!.text.replaceAll('.', ''),
-                                  stock: txtStok!.text,
-                                  createdAt: DateTime.now().toIso8601String());
-                              context
-                                  .read<ProductBloc>()
-                                  .add(CreateProduct(productsModel: req));
-                              context.read<ProductBloc>().add(GetProducts());
-                            },
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                fixedSize: const Size(150, 70),
-                                backgroundColor: const Color(0XFF2334A6)),
-                            child: Text(
-                              "Save",
-                              style: GoogleFonts.playfairDisplay(
-                                  color: const Color(0XFFFFFFFF), fontSize: 20),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                // body,
-                const SizedBox(height: 15),
-                Expanded(
-                    child: Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(20),
-                  color: Colors.white,
-                  child: ListView(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Nama Barang",
-                            style: GoogleFonts.playfairDisplay(fontSize: 20),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: txtNamaBarang,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                contentPadding: const EdgeInsets.only(
-                                    left: 35, top: 8, bottom: 15),
-                                fillColor: Colors.white,
-                                hintText: "Nama Barang",
-                                hintStyle:
-                                    const TextStyle(color: Color(0XFFAA9D9D))),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Category",
-                            style: GoogleFonts.playfairDisplay(fontSize: 20),
-                          ),
-                          const SizedBox(height: 10),
-                          Categori(txtCategory: txtCategory)
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Deskripsi",
-                            style: GoogleFonts.playfairDisplay(fontSize: 20),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: txtDeskripsi,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              contentPadding: const EdgeInsets.only(
-                                  left: 35, top: 8, bottom: 15),
-                              fillColor: Colors.white,
-                              hintText: "Deskripsi",
-                              hintStyle:
-                                  const TextStyle(color: Color(0XFFAA9D9D)),
+                  // body,
+                  const SizedBox(height: 15),
+                  Expanded(
+                      child: Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(20),
+                    color: Colors.white,
+                    child: ListView(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Nama Barang",
+                              style: GoogleFonts.playfairDisplay(fontSize: 20),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Pricing",
-                        style: GoogleFonts.playfairDisplay(fontSize: 20),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.37,
-                            child: TextField(
-                              controller: txtHarga,
-                              keyboardType: TextInputType.number,
-                              onChanged: (val) {
-                                setState(() {
-                                  if (val.isNotEmpty) {
-                                    val = val.replaceAll('.', '');
-                                  } else {
-                                    val = '';
-                                  }
-                                });
-                                txtHarga!.value = TextEditingValue(
-                                  text: NumberFormats.convertToIdr(val),
-                                  selection: TextSelection.fromPosition(
-                                    TextPosition(
-                                        offset: NumberFormats.convertToIdr(val)
-                                            .length),
-                                  ),
-                                );
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: txtNamaBarang,
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value == '') {
+                                  return "Nama Barang Harus Di Isi";
+                                }
+                                return null;
                               },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
@@ -757,16 +690,37 @@ class _ItemLibraryScreenState extends State<ItemLibraryScreen> {
                                 contentPadding: const EdgeInsets.only(
                                     left: 35, top: 8, bottom: 15),
                                 fillColor: Colors.white,
-                                hintText: "Harga",
-                                hintStyle:
-                                    const TextStyle(color: Color(0XFFAA9D9D)),
+                                hintText: "Nama Barang",
+                                hintStyle: const TextStyle(
+                                  color: Color(0XFFAA9D9D),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.37,
-                            child: TextField(
-                              controller: txtSku,
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Category",
+                              style: GoogleFonts.playfairDisplay(fontSize: 20),
+                            ),
+                            const SizedBox(height: 10),
+                            Categori(txtCategory: txtCategory)
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Deskripsi",
+                              style: GoogleFonts.playfairDisplay(fontSize: 20),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: txtDeskripsi,
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
@@ -775,264 +729,346 @@ class _ItemLibraryScreenState extends State<ItemLibraryScreen> {
                                 contentPadding: const EdgeInsets.only(
                                     left: 35, top: 8, bottom: 15),
                                 fillColor: Colors.white,
-                                hintText: "Sku",
+                                hintText: "Deskripsi",
                                 hintStyle:
                                     const TextStyle(color: Color(0XFFAA9D9D)),
                               ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Pricing",
+                          style: GoogleFonts.playfairDisplay(fontSize: 20),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.37,
+                              child: TextFormField(
+                                controller: txtHarga,
+                                keyboardType: TextInputType.number,
+                                onChanged: (val) {
+                                  setState(() {
+                                    if (val.isNotEmpty) {
+                                      val = val.replaceAll('.', '');
+                                    } else {
+                                      val = '';
+                                    }
+                                  });
+                                  txtHarga!.value = TextEditingValue(
+                                    text: NumberFormats.convertToIdr(val),
+                                    selection: TextSelection.fromPosition(
+                                      TextPosition(
+                                          offset:
+                                              NumberFormats.convertToIdr(val)
+                                                  .length),
+                                    ),
+                                  );
+                                },
+                                validator: (value) {
+                                  if (value == '') {
+                                    return "Harga Barang Harus Di Isi";
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 35, top: 8, bottom: 15),
+                                  fillColor: Colors.white,
+                                  hintText: "Harga",
+                                  hintStyle:
+                                      const TextStyle(color: Color(0XFFAA9D9D)),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.37,
+                              child: TextFormField(
+                                controller: txtSku,
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == '') {
+                                    return "SKU Barang Harus Di Isi";
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  contentPadding: const EdgeInsets.only(
+                                      left: 35, top: 8, bottom: 15),
+                                  fillColor: Colors.white,
+                                  hintText: "Sku",
+                                  hintStyle:
+                                      const TextStyle(color: Color(0XFFAA9D9D)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (varian.isEmpty) {
+                              var varianModel = VarianModel();
+                              varian.add(varianModel);
+                              context
+                                  .read<RequestVariantBloc>()
+                                  .add(GetVarianList(formVarian: varian));
+                            } else {
+                              for (var element in varian) {
+                                element.hargaModalVarian = element
+                                    .hargaModalVarian
+                                    .replaceAll('.', '');
+                                element.hargaVarian =
+                                    element.hargaVarian.replaceAll('.', '');
+                              }
+                            }
+                            modalVariant(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize:
+                                Size(MediaQuery.of(context).size.width * 1, 40),
+                            backgroundColor: const Color(0XFF2334A6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (varian.isEmpty) {
-                            var varianModel = VarianModel();
-                            varian.add(varianModel);
-                            context
-                                .read<RequestVariantBloc>()
-                                .add(GetVarianList(formVarian: varian));
-                          } else {
+                          child: Text(
+                            "Add Variant",
+                            textAlign: TextAlign.start,
+                            style: GoogleFonts.playfairDisplay(
+                                fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                        BlocBuilder<RequestVariantBloc, RequestVariantState>(
+                          builder: (context, state) {
+                            if (state is RequestVariantList) {
+                              return Column(
+                                children: state.formVarian.map((val) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            bottom:
+                                                BorderSide(color: Colors.black),
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.all(10),
+                                        margin: const EdgeInsets.all(10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.15,
+                                        child: Text(val.namaVarian),
+                                      ),
+                                      Container(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            bottom:
+                                                BorderSide(color: Colors.black),
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.all(10),
+                                        margin: const EdgeInsets.all(10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.15,
+                                        child: Text(NumberFormats.convertToIdr(
+                                            val.hargaVarian
+                                                .replaceAll('.', ''))),
+                                      ),
+                                      Container(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            bottom:
+                                                BorderSide(color: Colors.black),
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.all(10),
+                                        margin: const EdgeInsets.all(10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.15,
+                                        child: Text(val.skuVarian),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Inventory",
+                          style: GoogleFonts.playfairDisplay(fontSize: 20),
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            modalStock(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize:
+                                Size(MediaQuery.of(context).size.width * 1, 40),
+                            backgroundColor: const Color(0XFF2334A6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: Text(
+                            "Manage Stock",
+                            style: GoogleFonts.playfairDisplay(
+                                fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                        BlocBuilder<RequestVariantBloc, RequestVariantState>(
+                          builder: (context, state) {
+                            if (state is RequestVariantList) {
+                              return Column(
+                                children: state.formVarian.map((val) {
+                                  return (val.stokVarian.isNotEmpty)
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.all(10),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                              child: Text(val.namaVarian),
+                                            ),
+                                            Container(
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.all(10),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                              child: Text(val.stokVarian),
+                                            ),
+                                          ],
+                                        )
+                                      : const Row();
+                                }).toList(),
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Cost",
+                          style: GoogleFonts.playfairDisplay(fontSize: 20),
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
                             for (var element in varian) {
                               element.hargaModalVarian =
                                   element.hargaModalVarian.replaceAll('.', '');
                               element.hargaVarian =
                                   element.hargaVarian.replaceAll('.', '');
                             }
-                          }
-                          modalVariant(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize:
-                              Size(MediaQuery.of(context).size.width * 1, 40),
-                          backgroundColor: const Color(0XFF2334A6),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                            modalCost(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize:
+                                Size(MediaQuery.of(context).size.width * 1, 40),
+                            backgroundColor: const Color(0XFF2334A6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: Text(
+                            "Manage Cost / Harga Beli",
+                            style: GoogleFonts.playfairDisplay(
+                                fontSize: 16, color: Colors.white),
                           ),
                         ),
-                        child: Text(
-                          "Add Variant",
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.playfairDisplay(
-                              fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      BlocBuilder<RequestVariantBloc, RequestVariantState>(
-                        builder: (context, state) {
-                          if (state is RequestVariantList) {
-                            return Column(
-                              children: state.formVarian.map((val) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          bottom:
-                                              BorderSide(color: Colors.black),
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      margin: const EdgeInsets.all(10),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.15,
-                                      child: Text(val.namaVarian),
-                                    ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          bottom:
-                                              BorderSide(color: Colors.black),
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      margin: const EdgeInsets.all(10),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.15,
-                                      child: Text(NumberFormats.convertToIdr(
-                                          val.hargaVarian.replaceAll('.', ''))),
-                                    ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          bottom:
-                                              BorderSide(color: Colors.black),
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.all(10),
-                                      margin: const EdgeInsets.all(10),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.15,
-                                      child: Text(val.skuVarian),
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Inventory",
-                        style: GoogleFonts.playfairDisplay(fontSize: 20),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          modalStock(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize:
-                              Size(MediaQuery.of(context).size.width * 1, 40),
-                          backgroundColor: const Color(0XFF2334A6),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: Text(
-                          "Manage Stock",
-                          style: GoogleFonts.playfairDisplay(
-                              fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      BlocBuilder<RequestVariantBloc, RequestVariantState>(
-                        builder: (context, state) {
-                          if (state is RequestVariantList) {
-                            return Column(
-                              children: state.formVarian.map((val) {
-                                return (val.stokVarian.isNotEmpty)
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            decoration: const BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.black),
+                        BlocBuilder<RequestVariantBloc, RequestVariantState>(
+                          builder: (context, state) {
+                            if (state is RequestVariantList) {
+                              return Column(
+                                children: state.formVarian.map((val) {
+                                  return (val.hargaModalVarian.isNotEmpty)
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors.black),
+                                                ),
                                               ),
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.all(10),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                              child: Text(val.namaVarian),
                                             ),
-                                            padding: const EdgeInsets.all(10),
-                                            margin: const EdgeInsets.all(10),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.2,
-                                            child: Text(val.namaVarian),
-                                          ),
-                                          Container(
-                                            decoration: const BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.black),
+                                            Container(
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors.black),
+                                                ),
                                               ),
+                                              padding: const EdgeInsets.all(10),
+                                              margin: const EdgeInsets.all(10),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                              child: Text(
+                                                  NumberFormats.convertToIdr(val
+                                                      .hargaModalVarian
+                                                      .replaceAll('.', ''))),
                                             ),
-                                            padding: const EdgeInsets.all(10),
-                                            margin: const EdgeInsets.all(10),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.2,
-                                            child: Text(val.stokVarian),
-                                          ),
-                                        ],
-                                      )
-                                    : const Row();
-                              }).toList(),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Cost",
-                        style: GoogleFonts.playfairDisplay(fontSize: 20),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          for (var element in varian) {
-                            element.hargaModalVarian =
-                                element.hargaModalVarian.replaceAll('.', '');
-                            element.hargaVarian =
-                                element.hargaVarian.replaceAll('.', '');
-                          }
-                          modalCost(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize:
-                              Size(MediaQuery.of(context).size.width * 1, 40),
-                          backgroundColor: const Color(0XFF2334A6),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
+                                          ],
+                                        )
+                                      : const Row();
+                                }).toList(),
+                              );
+                            }
+                            return const SizedBox();
+                          },
                         ),
-                        child: Text(
-                          "Manage Cost / Harga Beli",
-                          style: GoogleFonts.playfairDisplay(
-                              fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      BlocBuilder<RequestVariantBloc, RequestVariantState>(
-                        builder: (context, state) {
-                          if (state is RequestVariantList) {
-                            return Column(
-                              children: state.formVarian.map((val) {
-                                return (val.hargaModalVarian.isNotEmpty)
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            decoration: const BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.black),
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.all(10),
-                                            margin: const EdgeInsets.all(10),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.2,
-                                            child: Text(val.namaVarian),
-                                          ),
-                                          Container(
-                                            decoration: const BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                    color: Colors.black),
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.all(10),
-                                            margin: const EdgeInsets.all(10),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.2,
-                                            child: Text(
-                                                NumberFormats.convertToIdr(val
-                                                    .hargaModalVarian
-                                                    .replaceAll('.', ''))),
-                                          ),
-                                        ],
-                                      )
-                                    : const Row();
-                              }).toList(),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ],
-                  ),
-                ))
-              ],
+                      ],
+                    ),
+                  ))
+                ],
+              ),
             ),
           ),
         );
