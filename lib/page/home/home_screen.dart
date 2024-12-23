@@ -781,8 +781,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         .length);
                                                       },
                                                       onChanged: (value) {
-                                                        if (value == "") {
-                                                          value = "1";
+                                                        if (value.isEmpty) {
+                                                          setState(() {
+                                                            txtQty.text = '1';
+                                                          });
                                                         }
                                                       },
                                                       onSubmitted: (value) {
@@ -812,6 +814,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       },
                                                       keyboardType:
                                                           TextInputType.number,
+                                                      inputFormatters: [
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly, // Hanya menerima angka
+                                                      ],
                                                       decoration:
                                                           const InputDecoration(
                                                         border:
@@ -822,7 +828,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 left: 15,
                                                                 top: 5,
                                                                 bottom: 5),
-                                                        hintText: "Order",
+                                                        hintText: "Qty",
                                                         hintStyle: TextStyle(
                                                             color: Color(
                                                                 0XFFAA9D9D),
@@ -3797,6 +3803,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           }
                                         },
                                         keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
                                         decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius:

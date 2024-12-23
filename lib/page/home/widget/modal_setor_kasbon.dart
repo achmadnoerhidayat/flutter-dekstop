@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kasir_dekstop/helper/number_format.dart';
 
@@ -91,7 +92,10 @@ class _ModalSetorKasbonState extends State<ModalSetorKasbon> {
                   height: 40,
                   margin: const EdgeInsets.only(bottom: 10),
                   child: TextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     controller: txtJml,
                     onChanged: (val) {
                       setState(() {
